@@ -1,4 +1,4 @@
-package trudvbolshom.desktop.model;
+package trudvbolshom.desktop.model.excel;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -27,6 +27,7 @@ public class ExcelWorker {
         } catch (InvalidFormatException | IOException e) {
             e.printStackTrace();
         }
+        initData();
     }
 
     public void initData() {

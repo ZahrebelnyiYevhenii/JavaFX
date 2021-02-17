@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import trudvbolshom.desktop.controller.MainController;
-import trudvbolshom.desktop.model.ExcelWorker;
+import trudvbolshom.desktop.model.excel.ExcelWorker;
 
 import java.io.IOException;
 

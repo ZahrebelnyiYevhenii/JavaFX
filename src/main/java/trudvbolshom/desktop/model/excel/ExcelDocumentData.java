@@ -1,4 +1,4 @@
-package trudvbolshom.desktop.model;
+package trudvbolshom.desktop.model.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
 

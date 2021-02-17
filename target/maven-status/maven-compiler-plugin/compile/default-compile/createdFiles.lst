@@ -1,0 +1,6 @@
+trudvbolshom\desktop\model\ExcelWorker.class
+trudvbolshom\desktop\model\ExcelDocumentData.class
+trudvbolshom\desktop\filter\ExcelFilters.class
+trudvbolshom\desktop\model\Worker.class
+trudvbolshom\desktop\controller\MainController.class
+trudvbolshom\desktop\starter\AppFX.class

@@ -1,7 +1,7 @@
 package trudvbolshom.desktop.filter;
 
 import org.apache.poi.ss.usermodel.Cell;
-import trudvbolshom.desktop.model.ExcelWorker;
+import trudvbolshom.desktop.model.excel.ExcelWorker;
 
 import java.util.HashMap;
 import java.util.List;
