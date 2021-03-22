@@ -48,7 +48,7 @@
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                  <children>
                                     <Button fx:id="ok" layoutX="69.0" layoutY="141.0" mnemonicParsing="false" onAction="#close" text="Хорошо" />
-                                    <Label fx:id="loadLabel" layoutX="32.0" layoutY="66.0" text="Файл успешно загружен" />
+                                    <Label fx:id="loadLabel" layoutX="21.0" layoutY="14.0" nodeOrientation="LEFT_TO_RIGHT" text="Файл успешно загружен" wrapText="true" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="19.0" />
                                  </children>
                               </AnchorPane>
                           </items>

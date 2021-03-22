@@ -6,58 +6,34 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import trudvbolshom.exception.WordWorkerException;
 
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static trudvbolshom.constants.ConstantsClass.SPECIAL_SYMBOL;
+
 public class WordWorker {
-
     public XWPFDocument workDocument;
+    public static final Pattern PATTERN = Pattern.compile(".*\\$(?<column>[0-9]?[0-9]).*");
 
-    public Map<Integer, String> getPerson() {
-        return person;
-    }
-
-    public Map<Integer, String> person = new HashMap<>();
-
-    {
-        person.put(0, "Vasia");
-        person.put(1, "01.20.2020");
-        person.put(2, "Бухгалтер");
-        person.put(3, "уволен");
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        WordWorker wordWorker = new WordWorker();
-        wordWorker.createWordDocument("C:\\template.docx", "C:\\template\\FILE.docx", wordWorker.getPerson());
-        wordWorker.getAllTemplateName();
-    }
-
-    public WordWorker() {
-
-    }
-
-    public void createWordDocument(String templateFile, String reportFile, Map<Integer, String> documentData) throws FileNotFoundException {
+    public void createWordDocument(String templateFile, String reportFile, Map<Integer, String> documentData) throws WordWorkerException {
         initWordDocument(templateFile);
         fillWordDocument(documentData);
 
         createNewWordDocument(reportFile);
     }
 
-
-    private void initWordDocument(String templateFile) throws FileNotFoundException {
+    private void initWordDocument(String templateFile) throws WordWorkerException {
         try {
             FileInputStream fileInputStream = new FileInputStream(templateFile);
             workDocument = new XWPFDocument(OPCPackage.open(fileInputStream));
         } catch (InvalidFormatException | IOException e) {
-            throw new FileNotFoundException("$$$$$ word file is not found $$$$$" + e);
+            throw new WordWorkerException("$$$$$ word file - " + templateFile + " is not found $$$$$");
         }
     }
 
@@ -76,22 +52,29 @@ public class WordWorker {
 
     private void replaceParagraph(XWPFParagraph paragraph, Map<Integer, String> documentData) {
         for (XWPFRun run : paragraph.getRuns()) {
-            if (run.getText(0) != null && run.getText(0).contains("$")) {
-                int columnNumber = getColumnNumber(run.getText(0));
-                run.setText(run.getText(0).replace("$" + columnNumber, documentData.get(columnNumber%4)), 0);
+            String columnText = run.getText(0);
+
+            if (isCorrectIndex(columnText)) {
+                int columnNumber = getColumnNumber(columnText);
+
+                if (documentData.containsKey(columnNumber))
+                    run.setText(columnText.replace(SPECIAL_SYMBOL + columnNumber, documentData.get(columnNumber)), 0);
             }
         }
     }
 
+    private boolean isCorrectIndex(String columnText) {
+        return columnText != null && PATTERN.matcher(columnText).matches();
+    }
+
     private int getColumnNumber(String columnText) {
-        Pattern pattern = Pattern.compile(".*\\$(?<column>[0-9]?[0-9]).*");
-        Matcher matcher = pattern.matcher(columnText);
+        Matcher matcher = PATTERN.matcher(columnText);
 
         if (matcher.matches()) {
             return Integer.parseInt(matcher.group("column"));
         }
 
-        throw new RuntimeException("$$$ column number is bad $$$");
+        return -1;
     }
 
     private void replaceTable(XWPFTable iBodyElement, Map<Integer, String> documentData) {
@@ -100,24 +83,16 @@ public class WordWorker {
                         .forEach(paragraph -> replaceParagraph(paragraph, documentData))));
     }
 
-    private void createNewWordDocument(String file) throws FileNotFoundException {
+    private void createNewWordDocument(String reportFile) throws WordWorkerException {
         try {
-            FileOutputStream outputStream = new FileOutputStream(file);
+            FileOutputStream outputStream = new FileOutputStream(reportFile);
 
             workDocument.write(outputStream);
 
             outputStream.close();
+            workDocument.close();
         } catch (IOException e) {
-            throw new FileNotFoundException("$$$$ create word file is exception $$$$" + e);
+            throw new WordWorkerException("$$$$ create word file " + reportFile + " is exception $$$$");
         }
-    }
-
-    public List<String> getAllTemplateName(){
-        List<String> allTemplate = new ArrayList<>();
-        File file = new File("src/main/resources/template");
-        for (File template : file.listFiles()) {
-            allTemplate.add(template.getName().replace(".docx", ""));
-        }
-        return allTemplate;
     }
 }

@@ -4,24 +4,18 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import trudvbolshom.desktop.controller.MainController;
-import trudvbolshom.desktop.model.excel.ExcelWorker;
 
 import java.io.IOException;
 
+import static trudvbolshom.constants.ConstantsClass.*;
+
 public class AppFX extends Application {
     private Stage primaryStage;
-    private AnchorPane rootLayout;
-    private ExcelWorker excelWorker;
 
     public Stage getPrimaryStage() {
         return primaryStage;
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
     }
 
     public static void main(String[] args) {
@@ -29,25 +23,23 @@ public class AppFX extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("TrudVBolshomGorode");
+        this.primaryStage.setTitle(PROGRAM_NAME);
         showBaseWindow();
     }
 
     private void showBaseWindow() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(AppFX.class.getResource("/xml/mainScene.fxml"));
-            rootLayout = loader.load();
+            loader.setLocation(AppFX.class.getResource(SCENE_DIR + "/mainScene.fxml"));
 
-            Scene scene = new Scene(rootLayout);
+            Scene scene = new Scene(loader.load());
             primaryStage.setScene(scene);
-            Image image = new Image("/images/someImage.jpg");
+            Image image = new Image(PROGRAM_ICON);
 
             MainController mainController = loader.getController();
             mainController.setAppFX(this);
-            mainController.setExcelWorker(excelWorker);
 
             primaryStage.getIcons().add(image);
             primaryStage.show();

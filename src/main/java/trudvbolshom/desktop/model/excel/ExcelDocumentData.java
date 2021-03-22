@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExcelDocumentData {
-
-    private Map<Integer, List<Cell>> dataByRows;
+    private final Map<Integer, List<Cell>> dataByRows;
 
     public ExcelDocumentData() {
         dataByRows = new HashMap<>();

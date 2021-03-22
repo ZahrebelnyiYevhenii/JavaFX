@@ -14,10 +14,16 @@ import javafx.stage.FileChooser;
 import trudvbolshom.desktop.model.excel.ExcelWorker;
 import trudvbolshom.desktop.model.word.WordWorker;
 import trudvbolshom.desktop.starter.AppFX;
+import trudvbolshom.exception.ExcelWorkerException;
+import trudvbolshom.exception.WordWorkerException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static trudvbolshom.constants.ConstantsClass.*;
@@ -42,15 +48,19 @@ public class MainController {
 
             excelWorker = new ExcelWorker(file.getPath());
 
-            fillLoadLabel(true);
-        } catch (RuntimeException runException) {
-            fillLoadLabel(false);
+            showLoadLabel(SUCCESS);
+        } catch (ExcelWorkerException e) {
+            showLoadLabel(e.getMessage());
         }
     }
 
-    private void fillLoadLabel(boolean isSuccess) {
+    private void showLoadLabel(String text) {
         smallPanel.setVisible(true);
-        loadLabel.setText(isSuccess ? SUCCESS : UNSUCCESSFUL);
+        fillLoadLabel(text);
+    }
+
+    private void fillLoadLabel(String text) {
+        loadLabel.setText(text);
     }
 
     private void fillTable() {
@@ -70,7 +80,7 @@ public class MainController {
         table.setItems(data);
     }
 
-    private ObservableList<String> getExcelRowData(int rowNumber){
+    private ObservableList<String> getExcelRowData(int rowNumber) {
         ObservableList<String> row = FXCollections.observableArrayList();
 
         for (String title : excelWorker.getTitles()) {
@@ -98,12 +108,15 @@ public class MainController {
     }
 
     @FXML
-    private void createWordTemplate() throws FileNotFoundException {
-        String templateFilePath = RESOURCE_FOLDER + TEMPLATE_DIR + choiceTemplate.getValue() + WORD_DOCUMENT;
-        Map<Integer, String> rowData = getRowData();
-        String reportFilePath = RESOURCE_FOLDER + REPORT_DIR + choiceTemplate.getValue() + "/" + rowData.get(NUMBER_NAME_COLUMN) + WORD_DOCUMENT;
-
-        wordWorker.createWordDocument(templateFilePath, reportFilePath, rowData);
+    private void createWordTemplate() {
+        try {
+            String templateFilePath = RESOURCE_FOLDER + TEMPLATE_DIR + choiceTemplate.getValue() + WORD_DOCUMENT;
+            Map<Integer, String> rowData = getRowData();
+            String reportFilePath = RESOURCE_FOLDER + REPORT_DIR + choiceTemplate.getValue() + "/" + rowData.get(NUMBER_NAME_COLUMN) + WORD_DOCUMENT;
+            wordWorker.createWordDocument(templateFilePath, reportFilePath, rowData);
+        } catch (WordWorkerException e) {
+            showLoadLabel(e.getMessage());
+        }
     }
 
     private Map<Integer, String> getRowData() {
@@ -120,8 +133,28 @@ public class MainController {
     private void fillDisplayElement() {
         choiceTitle.setItems(FXCollections.observableArrayList(excelWorker.getTitles()));
         choiceTitle.setValue(excelWorker.getTitles().get(0));
-        choiceTemplate.setItems(FXCollections.observableArrayList(wordWorker.getAllTemplateName()));
-        choiceTemplate.setValue(wordWorker.getAllTemplateName().get(0));
+        choiceTemplate.setItems(FXCollections.observableArrayList(getAllTemplateName()));
+        choiceTemplate.setValue(getAllTemplateName().get(0));
+    }
+
+    public List<String> getAllTemplateName() {
+        List<String> allTemplate = new ArrayList<>();
+
+        try {
+            File file = new File("src/main/resources/template");
+
+            for (File template : file.listFiles()) {
+                allTemplate.add(template.getName().replace(".docx", ""));
+            }
+
+            for (String fileName : allTemplate) {
+                Files.createDirectories(Paths.get(RESOURCE_FOLDER + REPORT_DIR + fileName));
+            }
+        } catch (IOException e) {
+           showLoadLabel(ERROR);
+        }
+
+        return allTemplate;
     }
 
     @FXML
@@ -140,7 +173,6 @@ public class MainController {
     public void setExcelWorker(ExcelWorker excelWorker) {
         this.excelWorker = excelWorker;
     }
-
 
     @FXML
     private AnchorPane smallPanel;
