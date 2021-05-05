@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
@@ -13,7 +14,7 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="trudvbolshom.desktop.controller.MainController">
    <children>
-      <SplitPane dividerPositions="0.29797979797979796" layoutX="426.0" layoutY="220.0" prefHeight="600.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.2979942693409742" layoutX="426.0" layoutY="220.0" prefHeight="600.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
@@ -36,31 +37,44 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <TableView fx:id="table" layoutX="14.0" layoutY="110.0" prefHeight="393.0" prefWidth="487.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <ChoiceBox fx:id="choiceTitle" layoutX="319.0" layoutY="39.0" prefWidth="150.0" AnchorPane.rightAnchor="10.0" />
-                  <Label alignment="CENTER" layoutX="317.0" layoutY="14.0" prefHeight="17.0" prefWidth="150.0" text="Название столбца" textAlignment="CENTER" AnchorPane.rightAnchor="10.0" />
-                  <TextField layoutX="14.0" layoutY="39.0" prefHeight="25.0" prefWidth="299.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="178.0" />
-                  <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="299.0" text="Поиск по столбцу" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="178.0" />
-                  <AnchorPane fx:id="smallPanel" layoutY="186.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="200.0" prefWidth="200.0" visible="false">
-                     <children>
-                        <SplitPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <items>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                 <children>
-                                    <Button fx:id="ok" layoutX="69.0" layoutY="141.0" mnemonicParsing="false" onAction="#close" text="Хорошо" />
-                                    <Label fx:id="loadLabel" layoutX="21.0" layoutY="14.0" nodeOrientation="LEFT_TO_RIGHT" text="Файл успешно загружен" wrapText="true" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="19.0" />
-                                 </children>
-                              </AnchorPane>
-                          </items>
-                        </SplitPane>
-                     </children>
-                  </AnchorPane>
-                  <ChoiceBox fx:id="choiceTemplate" layoutX="14.0" layoutY="148.0" prefWidth="150.0" />
-                  <Button fx:id="template" layoutX="174.0" layoutY="148.0" mnemonicParsing="false" onAction="#createWordTemplate" text="Получить шаблон" />
-                  <Label layoutX="67.0" layoutY="120.0" text="Шаблон" />
+                  <SplitPane dividerPositions="0.49161073825503354" orientation="VERTICAL" prefHeight="598.0" prefWidth="487.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                      <AnchorPane fx:id="createReport" prefHeight="280.0" prefWidth="485.0">
+                           <children>
+                              <ChoiceBox fx:id="choiceTitle" layoutX="321.0" layoutY="38.0" prefWidth="150.0" />
+                              <ChoiceBox fx:id="choiceTemplate" layoutX="9.0" layoutY="89.0" prefHeight="25.0" prefWidth="150.0" />
+                              <Label layoutX="62.0" layoutY="70.0" text="Шаблон" />
+                              <Button fx:id="template" layoutX="185.0" layoutY="89.0" mnemonicParsing="false" onAction="#createWordTemplate" text="Получить шаблон" />
+                              <Label alignment="CENTER" layoutX="19.0" layoutY="14.0" prefHeight="17.0" prefWidth="175.0" text="Поиск по столбцу" />
+                              <TextField layoutX="19.0" layoutY="38.0" prefHeight="25.0" prefWidth="175.0" />
+                              <Label alignment="CENTER" layoutX="321.0" layoutY="14.0" prefHeight="17.0" prefWidth="150.0" text="Название столбца" textAlignment="CENTER" />
+                              <CheckBox fx:id="chooseOneFile" layoutX="363.0" layoutY="93.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="92.0" text="один файл" />
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane>
+                           <children>
+                              <TableView fx:id="table" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
                </children>
             </AnchorPane>
         </items>
       </SplitPane>
+      <AnchorPane fx:id="smallPanel" nodeOrientation="RIGHT_TO_LEFT" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="200.0">
+         <children>
+            <SplitPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <Button fx:id="ok" layoutX="69.0" layoutY="141.0" mnemonicParsing="false" onAction="#close" text="Хорошо" />
+                        <Label fx:id="loadLabel" layoutX="21.0" layoutY="14.0" nodeOrientation="LEFT_TO_RIGHT" text="Файл успешно загружен" wrapText="true" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="19.0" />
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

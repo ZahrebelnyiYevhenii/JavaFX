@@ -4,10 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -65,6 +62,7 @@ public class MainController {
 
     private void fillTable() {
         table.setEditable(true);
+        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getColumns().clear();
         fillColumnCell();
         fillTableColumns();
@@ -111,23 +109,23 @@ public class MainController {
     private void createWordTemplate() {
         try {
             String templateFilePath = RESOURCE_FOLDER + TEMPLATE_DIR + choiceTemplate.getValue() + WORD_DOCUMENT;
-            Map<Integer, String> rowData = getRowData();
-            String reportFilePath = RESOURCE_FOLDER + REPORT_DIR + choiceTemplate.getValue() + "/" + rowData.get(NUMBER_NAME_COLUMN) + WORD_DOCUMENT;
-            wordWorker.createWordDocument(templateFilePath, reportFilePath, rowData);
+            Map<Integer, List<String>> listOfRowData = getListOfRowData();
+            String reportFilePath = RESOURCE_FOLDER + REPORT_DIR + choiceTemplate.getValue() + "/" + listOfRowData.get(NUMBER_NAME_COLUMN).get(NUMBER_NAME_COLUMN) + WORD_DOCUMENT;
+            wordWorker.createWordDocument(templateFilePath, reportFilePath, listOfRowData);
         } catch (WordWorkerException e) {
             showLoadLabel(e.getMessage());
         }
     }
 
-    private Map<Integer, String> getRowData() {
-        ObservableList<String> selectedRow = table.getSelectionModel().getSelectedItem();
-        Map<Integer, String> rowData = new HashMap<>();
+    private Map<Integer, List<String>> getListOfRowData() {
+        ObservableList<ObservableList<String>> selectedRow = table.getSelectionModel().getSelectedItems();
+        Map<Integer, List<String>> listRowData = new HashMap<>();
 
-        for (String cellOnRow : selectedRow) {
-            rowData.put(selectedRow.indexOf(cellOnRow), cellOnRow);
+        for (ObservableList<String> listOfRowData : selectedRow) {
+            listRowData.put(selectedRow.indexOf(listOfRowData), listOfRowData);
         }
 
-        return rowData;
+        return listRowData;
     }
 
     private void fillDisplayElement() {
@@ -141,17 +139,17 @@ public class MainController {
         List<String> allTemplate = new ArrayList<>();
 
         try {
-            File file = new File("src/main/resources/template");
+            File file = new File(RESOURCE_FOLDER + TEMPLATE_DIR);
 
             for (File template : file.listFiles()) {
-                allTemplate.add(template.getName().replace(".docx", ""));
+                allTemplate.add(template.getName().replace(WORD_DOCUMENT, ""));
             }
 
             for (String fileName : allTemplate) {
                 Files.createDirectories(Paths.get(RESOURCE_FOLDER + REPORT_DIR + fileName));
             }
         } catch (IOException e) {
-           showLoadLabel(ERROR);
+            showLoadLabel(ERROR);
         }
 
         return allTemplate;

@@ -1,7 +1,9 @@
-C:\javaFx\JavaFX\src\main\java\trudvbolshom\desktop\model\ExcelDocumentData.java
-C:\javaFx\JavaFX\src\main\java\trudvbolshom\desktop\model\Worker.java
-C:\javaFx\JavaFX\src\main\java\trudvbolshom\desktop\starter\TrudVBolshomGorode.java
-C:\javaFx\JavaFX\src\main\java\trudvbolshom\desktop\filter\ExcelFilters.java
-C:\javaFx\JavaFX\src\main\java\trudvbolshom\desktop\controller\MainController.java
-C:\javaFx\JavaFX\src\main\java\trudvbolshom\desktop\model\ExcelWorker.java
-C:\javaFx\JavaFX\src\main\java\trudvbolshom\desktop\starter\AppFX.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\exception\ExcelWorkerException.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\desktop\model\word\WordWorker.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\desktop\model\excel\ExcelWorker.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\desktop\controller\MainController.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\desktop\model\excel\ExcelDocumentData.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\desktop\starter\AppFX.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\exception\WordWorkerException.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\desktop\filter\ExcelFilters.java
+E:\java\project\JavaFX\trudvbolshom\src\main\java\trudvbolshom\constants\ConstantsClass.java

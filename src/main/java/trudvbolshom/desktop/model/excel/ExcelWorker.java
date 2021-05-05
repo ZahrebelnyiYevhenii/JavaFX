@@ -2,16 +2,15 @@ package trudvbolshom.desktop.model.excel;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import trudvbolshom.exception.ExcelWorkerException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,10 +70,30 @@ public class ExcelWorker {
         for (int i = 0; i <= getTitles().size(); i++) {
             if (getTitles().get(i).equals(columnName)) {
                 int finalI = i;
-                return excelDocumentData.getDataByRows().values().stream().skip(1).map(row -> row.get(finalI).getStringCellValue()).collect(Collectors.toList());
+                List<String> result = new ArrayList<>();
+
+                excelDocumentData.getDataByRows().values().stream().skip(1).filter(row -> row.size() > 0).forEach((x) -> {
+                    if (x.get(finalI).getCellType().equals(CellType.STRING)) {
+                        result.add(String.valueOf(x.get(finalI).getStringCellValue()));
+                    } else if (x.get(finalI).getCellType().equals(CellType.NUMERIC)) {
+                        if (DateUtil.isCellDateFormatted(x.get(finalI))) {
+                            result.add(getFormatDate(finalI, x));
+                        } else {
+                            result.add((String.valueOf(x.get(finalI).getNumericCellValue())));
+                        }
+                    }
+                });
+                return result;
             }
         }
         return null;
+    }
+
+    private String getFormatDate(int finalI, List<Cell> x) {
+        return DateTimeFormatter
+                .ofLocalizedDate(FormatStyle.MEDIUM)
+                .withLocale(new Locale("ru"))
+                .format(x.get(finalI).getLocalDateTimeCellValue().toLocalDate());
     }
 
     public Map<String, List<String>> getTableData() {
