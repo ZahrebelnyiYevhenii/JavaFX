@@ -22,7 +22,7 @@
                     <menus>
                       <Menu mnemonicParsing="false" text="Файл">
                         <items>
-                          <MenuItem fx:id="load" mnemonicParsing="false" onAction="#loader" text="Загрузить excel" />
+                          <MenuItem fx:id="uploadExcelFile" mnemonicParsing="false" onAction="#uploadExcelFile" text="Загрузить excel" />
                               <MenuItem mnemonicParsing="false" text="Сохранить" />
                         </items>
                       </Menu>

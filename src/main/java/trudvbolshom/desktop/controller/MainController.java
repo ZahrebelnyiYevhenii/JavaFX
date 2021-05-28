@@ -8,8 +8,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import trudvbolshom.desktop.model.excel.ExcelWorker;
-import trudvbolshom.desktop.model.word.WordWorker;
+import trudvbolshom.desktop.model.list.RowList;
+import trudvbolshom.desktop.model.reader.FileReader;
+import trudvbolshom.desktop.model.reader.excel.ExcelReader;
+import trudvbolshom.desktop.model.writer.word.WordWriter;
 import trudvbolshom.desktop.starter.AppFX;
 import trudvbolshom.exception.ExcelWorkerException;
 import trudvbolshom.exception.WordWorkerException;
@@ -26,94 +28,106 @@ import java.util.Map;
 import static trudvbolshom.constants.ConstantsClass.*;
 
 public class MainController {
+    @FXML
+    private AnchorPane smallPanel;
+    @FXML
+    private Label loadLabel;
+    @FXML
+    private TableView<ObservableList<String>> table;
+    @FXML
+    private ChoiceBox<String> choiceTitle;
+    @FXML
+    private ChoiceBox<String> choiceTemplate;
+
     private AppFX appFX;
-    private ExcelWorker excelWorker;
-    private WordWorker wordWorker;
+    private FileReader fileReader;
 
     @FXML
-    private void loader() {
-        loadExcelFile();
+    private void uploadExcelFile() {
+        load();
+        initTable();
         fillTable();
-        wordWorker = new WordWorker();
         fillDisplayElement();
     }
 
-    private void loadExcelFile() {
+    private void load() {
         try {
-            FileChooser fileChooser = new FileChooser();
-            File file = fileChooser.showOpenDialog(appFX.getPrimaryStage());
-
-            excelWorker = new ExcelWorker(file.getPath());
-
-            showLoadLabel(SUCCESS);
+            loadExcelFile();
         } catch (ExcelWorkerException e) {
-            showLoadLabel(e.getMessage());
+            showStatusLabel(e.getMessage());
         }
     }
 
-    private void showLoadLabel(String text) {
-        smallPanel.setVisible(true);
-        fillLoadLabel(text);
+    private void loadExcelFile() throws ExcelWorkerException {
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(appFX.getPrimaryStage());
+
+        fileReader = new ExcelReader(file.getPath());
+
+        showStatusLabel(SUCCESS);
     }
 
-    private void fillLoadLabel(String text) {
+    private void showStatusLabel(String text) {
+        smallPanel.setVisible(true);
         loadLabel.setText(text);
     }
 
-    private void fillTable() {
+    private void initTable() {
         table.setEditable(true);
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getColumns().clear();
-        fillColumnCell();
-        fillTableColumns();
     }
 
-    private void fillColumnCell() {
-        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
-
-        for (int rowNumber = 0; rowNumber < excelWorker.getCountRows(); rowNumber++) {
-            data.add(getExcelRowData(rowNumber));
-        }
-
-        table.setItems(data);
+    private void fillTable() {
+        createColumnsWithTitle();
+        fillCell();
     }
 
-    private ObservableList<String> getExcelRowData(int rowNumber) {
-        ObservableList<String> row = FXCollections.observableArrayList();
-
-        for (String title : excelWorker.getTitles()) {
-            row.add(excelWorker.getTableData().get(title).get(rowNumber));
-        }
-
-        return row;
-    }
-
-    private void fillTableColumns() {
+    private void createColumnsWithTitle() {
         int columnNumber = 0;
 
-        for (String title : excelWorker.getTitles()) {
-            TableColumn<ObservableList<String>, String> column = new TableColumn<>(title);
-
-            int finalColumnNumber = columnNumber;
-            column.setEditable(true);
-            column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(finalColumnNumber)));
-            column.setCellFactory(TextFieldTableCell.forTableColumn());
-            column.setOnEditCommit(event -> System.out.println(event.getTablePosition().getTableColumn().getCellData(event.getTablePosition().getRow())));
+        for (String title : fileReader.getTitles()) {
+            TableColumn<ObservableList<String>, String> column = createColumn(columnNumber, title);
 
             table.getColumns().add(column);
             columnNumber++;
         }
     }
 
+    private TableColumn<ObservableList<String>, String> createColumn(int columnNumber, String title) {
+        TableColumn<ObservableList<String>, String> column = new TableColumn<>(title);
+
+        column.setEditable(true);
+        column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(columnNumber)));
+        column.setCellFactory(TextFieldTableCell.forTableColumn());
+        // TODO changes cell text, in future
+        //        column.setOnEditCommit(event -> System.out.println(event.getTablePosition().getTableColumn().getCellData(event.getTablePosition().getRow())));
+
+        return column;
+    }
+
+    private void fillCell() {
+        RowList rowList = new RowList(fileReader);
+
+        rowList.fillRows();
+
+        table.setItems(rowList.getRows());
+    }
+
+
     @FXML
     private void createWordTemplate() {
         try {
             String templateFilePath = RESOURCE_FOLDER + TEMPLATE_DIR + choiceTemplate.getValue() + WORD_DOCUMENT;
             Map<Integer, List<String>> listOfRowData = getListOfRowData();
+            WordWriter wordWriter = new WordWriter(templateFilePath);
+
+            wordWriter.fillWordDocument(listOfRowData);
+
             String reportFilePath = RESOURCE_FOLDER + REPORT_DIR + choiceTemplate.getValue() + "/" + listOfRowData.get(NUMBER_NAME_COLUMN).get(NUMBER_NAME_COLUMN) + WORD_DOCUMENT;
-            wordWorker.createWordDocument(templateFilePath, reportFilePath, listOfRowData);
+            wordWriter.createNewWordDocument(reportFilePath);
         } catch (WordWorkerException e) {
-            showLoadLabel(e.getMessage());
+            showStatusLabel(e.getMessage());
         }
     }
 
@@ -129,8 +143,8 @@ public class MainController {
     }
 
     private void fillDisplayElement() {
-        choiceTitle.setItems(FXCollections.observableArrayList(excelWorker.getTitles()));
-        choiceTitle.setValue(excelWorker.getTitles().get(0));
+        choiceTitle.setItems(FXCollections.observableArrayList(fileReader.getTitles()));
+        choiceTitle.setValue(fileReader.getTitles().get(0));
         choiceTemplate.setItems(FXCollections.observableArrayList(getAllTemplateName()));
         choiceTemplate.setValue(getAllTemplateName().get(0));
     }
@@ -149,7 +163,7 @@ public class MainController {
                 Files.createDirectories(Paths.get(RESOURCE_FOLDER + REPORT_DIR + fileName));
             }
         } catch (IOException e) {
-            showLoadLabel(ERROR);
+            showStatusLabel(ERROR);
         }
 
         return allTemplate;
@@ -163,23 +177,4 @@ public class MainController {
     public void setAppFX(AppFX appFX) {
         this.appFX = appFX;
     }
-
-    public ExcelWorker getExcelWorker() {
-        return excelWorker;
-    }
-
-    public void setExcelWorker(ExcelWorker excelWorker) {
-        this.excelWorker = excelWorker;
-    }
-
-    @FXML
-    private AnchorPane smallPanel;
-    @FXML
-    private Label loadLabel;
-    @FXML
-    private TableView<ObservableList<String>> table;
-    @FXML
-    private ChoiceBox<String> choiceTitle;
-    @FXML
-    private ChoiceBox<String> choiceTemplate;
 }

@@ -31,20 +31,24 @@ public class AppFX extends Application {
 
     private void showBaseWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(AppFX.class.getResource(SCENE_DIR + "/mainScene.fxml"));
-
-            Scene scene = new Scene(loader.load());
-            primaryStage.setScene(scene);
-            Image image = new Image(PROGRAM_ICON);
-
-            MainController mainController = loader.getController();
-            mainController.setAppFX(this);
-
-            primaryStage.getIcons().add(image);
-            primaryStage.show();
+            initBaseWindow();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initBaseWindow() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(AppFX.class.getResource(SCENE_DIR + "/mainScene.fxml"));
+
+        Scene main = new Scene(loader.load());
+        primaryStage.setScene(main);
+        Image icon = new Image(PROGRAM_ICON);
+
+        MainController mainController = loader.getController();
+        mainController.setAppFX(this);
+
+        primaryStage.getIcons().add(icon);
+        primaryStage.show();
     }
 }
