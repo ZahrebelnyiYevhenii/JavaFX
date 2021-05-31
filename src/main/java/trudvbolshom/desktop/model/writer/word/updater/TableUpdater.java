@@ -19,9 +19,9 @@ public class TableUpdater extends Updater<XWPFTable> {
     public void replace(XWPFTable table) {
         if (isRowsMoreThanOne()) {
             addMoreRowToTable(table);
-        } else {
-            replaceRows(table);
         }
+
+        replaceRows(table);
     }
 
     private boolean isRowsMoreThanOne() {
@@ -29,15 +29,10 @@ public class TableUpdater extends Updater<XWPFTable> {
     }
 
     private void addMoreRowToTable(XWPFTable table) {
-        try {
-            createNewRow(table);
-        } catch (WordWorkerException e) {
-            //TODO EXCEPTION
-            e.printStackTrace();
-        }
+        createNewRow(table);
     }
 
-    private void createNewRow(XWPFTable table) throws WordWorkerException {
+    private void createNewRow(XWPFTable table) {
         configTable(table);
         XWPFTableRow rootTableRow = getFirstRowTable(table);
 
@@ -50,7 +45,7 @@ public class TableUpdater extends Updater<XWPFTable> {
         table.setCellMargins(25, 25, 25, 25);
     }
 
-    private XWPFTableRow getFirstRowTable(XWPFTable table) throws WordWorkerException {
+    private XWPFTableRow getFirstRowTable(XWPFTable table) {
         for (XWPFTableRow row : table.getRows()) {
             if (isRowWithSpecialSymbol(row)) {
                 return row;
@@ -77,21 +72,75 @@ public class TableUpdater extends Updater<XWPFTable> {
     }
 
     private void createNewRowForPerson(XWPFTable table, XWPFTableRow rootTableRow) {
-        XWPFTableRow newTableRow = table.insertNewTableRow(table.getRows().indexOf(rootTableRow) + 1);
+        int posRowInTable = table.getRows().indexOf(rootTableRow);
+        XWPFTableRow newTableRow = table.insertNewTableRow(posRowInTable + 1);
+        configRow(rootTableRow, newTableRow);
 
-        for (int currentCellIndex = 0; currentCellIndex < table.getRows().get(table.getRows().indexOf(rootTableRow)).getTableICells().size(); currentCellIndex++) {
-            configNewTableRow(newTableRow, currentCellIndex, rootTableRow);
+        createNewCells(table, rootTableRow, posRowInTable, newTableRow);
+    }
 
-            XWPFTableCell rootTableCell = rootTableRow.getCell(currentCellIndex);
-            XWPFTableCell newTableCell = configNewTableCell(rootTableCell, newTableRow, currentCellIndex);
+    private void configRow(XWPFTableRow rootTableRow, XWPFTableRow newTableRow) {
+        newTableRow.setHeight(rootTableRow.getHeight());
+    }
 
-            XWPFParagraph newCellParagraph = newTableCell.addParagraph();
-            newCellParagraph.setAlignment(ParagraphAlignment.CENTER);
+    private void createNewCells(XWPFTable table, XWPFTableRow rootTableRow, int posRowInTable, XWPFTableRow newTableRow) {
+        int countCellsInRow = table.getRows().get(posRowInTable).getTableICells().size();
 
-            if (rootTableCell.getParagraphs().get(0).getRuns().size() != 0) {
-                configParagraphRun(rootTableRow, currentCellIndex, newCellParagraph);
-            }
+        for (int currentCellIndex = 0; currentCellIndex < countCellsInRow; currentCellIndex++) {
+            XWPFTableCell rootCell = rootTableRow.getCell(currentCellIndex);
+            XWPFTableCell newCell = createNewCell(rootCell, newTableRow);
+
+            createNewParagraphs(rootCell, newCell);
         }
+    }
+
+    private XWPFTableCell createNewCell(XWPFTableCell rootTableCell, XWPFTableRow newTableRow) {
+        XWPFTableCell newTableCell = newTableRow.addNewTableCell();
+
+        configCell(rootTableCell, newTableCell);
+
+        return newTableCell;
+    }
+
+    private void configCell(XWPFTableCell rootTableCell, XWPFTableCell newTableCell) {
+        newTableCell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+        newTableCell.getCTTc().addNewTcPr().addNewTcBorders();
+        newTableCell.getCTTc().getTcPr().setTcBorders(
+                rootTableCell.getCTTc().getTcPr().getTcBorders());
+    }
+
+    private void createNewParagraphs(XWPFTableCell rootTableCell, XWPFTableCell newTableCell) {
+        XWPFParagraph rootParagraph = rootTableCell.getParagraphs().get(0);
+        XWPFParagraph newParagraph = createNewParagraph(newTableCell);
+
+        if (rootParagraph.getRuns().size() != 0) {
+            createNewRun(rootParagraph, newParagraph);
+        }
+    }
+
+    private XWPFParagraph createNewParagraph(XWPFTableCell newTableCell) {
+        XWPFParagraph newCellParagraph = newTableCell.addParagraph();
+
+        newCellParagraph.setAlignment(ParagraphAlignment.CENTER);
+
+        return newCellParagraph;
+    }
+
+    private void createNewRun(XWPFParagraph rootParagraph, XWPFParagraph newParagraph) {
+        XWPFRun rootRun = rootParagraph.getRuns().get(0);
+        XWPFRun newRun = newParagraph.createRun();
+
+        configRun(rootRun, newRun);
+    }
+
+    private void configRun(XWPFRun rootRun, XWPFRun newRun) {
+        newRun.setBold(rootRun.isBold());
+        newRun.setItalic(rootRun.isItalic());
+        newRun.setFontFamily(rootRun.getFontFamily());
+        newRun.setText(rootRun.getText(0));
+
+        if (rootRun.getFontSizeAsDouble() != null)
+            newRun.setFontSize(rootRun.getFontSizeAsDouble());
     }
 
     private void replaceRows(XWPFTable table) {
@@ -111,7 +160,6 @@ public class TableUpdater extends Updater<XWPFTable> {
         }
     }
 
-    //refact later
     private void replaceCell(XWPFTableCell cell, int countRowWithSymbol) {
         for (XWPFParagraph paragraph : cell.getParagraphs()) {
             if (isParagraphHasSpecialSymbol(paragraph)) {
@@ -120,40 +168,4 @@ public class TableUpdater extends Updater<XWPFTable> {
             }
         }
     }
-
-    private void configNewTableRow(XWPFTableRow newTableRow, int currentCellIndex, XWPFTableRow rootTableRow) {
-        if (newTableRow.getCell(currentCellIndex) == null) {
-            newTableRow.addNewTableCell();
-        }
-
-        newTableRow.setHeight(rootTableRow.getHeight());
-    }
-
-    private XWPFTableCell configNewTableCell(XWPFTableCell rootTableCell, XWPFTableRow newTableRow, int currentCellIndex) {
-        XWPFTableCell newTableCell = newTableRow.getCell(currentCellIndex);
-
-        newTableCell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-        newTableCell.getCTTc().addNewTcPr().addNewTcBorders();
-        newTableCell.getCTTc().getTcPr().setTcBorders(
-                rootTableCell.getCTTc().getTcPr().getTcBorders());
-
-        return newTableCell;
-    }
-
-    private XWPFRun configParagraphRun(XWPFTableRow rootTableRow, int currentCellIndex, XWPFParagraph newCellParagraph) {
-        XWPFRun newParagraphRun = newCellParagraph.createRun();
-
-        newParagraphRun.setBold(rootTableRow.getCell(currentCellIndex).getParagraphs().get(0).getRuns().get(0).isBold());
-        newParagraphRun.setItalic(rootTableRow.getCell(currentCellIndex).getParagraphs().get(0).getRuns().get(0).isItalic());
-        newParagraphRun.setFontFamily(rootTableRow.getCell(currentCellIndex).getParagraphs().get(0).getRuns().get(0).getFontFamily());
-        newParagraphRun.setText(rootTableRow.getCell(currentCellIndex).getText());
-        if (rootTableRow.getCell(currentCellIndex).getParagraphs().get(0).getRuns().get(0).getFontSizeAsDouble() != null)
-            newParagraphRun.setFontSize(rootTableRow.getCell(currentCellIndex).getParagraphs().get(0).getRuns().get(0).getFontSizeAsDouble());
-
-        return newParagraphRun;
-    }
-
-
-
-
 }

@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 
 import static trudvbolshom.constants.ConstantsClass.SPECIAL_SYMBOL;
 
-public class ParagraphUpdater extends Updater<XWPFParagraph>{
+public class ParagraphUpdater extends Updater<XWPFParagraph> {
     public int countRowWithSymbol = 0;
 
     public ParagraphUpdater(Map<Integer, List<String>> listOfRowData) {
@@ -21,23 +21,22 @@ public class ParagraphUpdater extends Updater<XWPFParagraph>{
     public void replace(XWPFParagraph paragraph) {
         if (paragraph.getRuns().size() != 0) {
             for (XWPFRun run : paragraph.getRuns()) {
-                replaceRun(run, countRowWithSymbol);
+                replaceRun(run);
             }
         }
     }
 
-    private void replaceRun(XWPFRun run, int countRowWithSymbol) {
+    private void replaceRun(XWPFRun run) {
         String columnText = run.getText(0);
 
         if (PatternValidator.isTextHasSpecialSymbol(columnText)) {
-            replaceSymbolToData(run, countRowWithSymbol, columnText);
-        } else if (isTableHasNumeration(run, countRowWithSymbol)) {
-            increaseNumeration(run, countRowWithSymbol);
+            replaceSymbolToData(run, columnText);
+        } else if (isTableHasNumeration(columnText)) {
+            increaseNumeration(run, columnText);
         }
     }
 
-
-    private void replaceSymbolToData(XWPFRun run, int countRowWithSymbol, String columnText) {
+    private void replaceSymbolToData(XWPFRun run, String columnText) {
         int columnNumber = getColumnNumber(columnText);
 
         if (listOfRowData.get(countRowWithSymbol).size() > columnNumber) {
@@ -55,16 +54,16 @@ public class ParagraphUpdater extends Updater<XWPFParagraph>{
         return -1;
     }
 
-    private boolean isTableHasNumeration(XWPFRun run, int countRowWithSymbol) {
-        return countRowWithSymbol != 0 && isRunHasNumeration(run);
+    private boolean isTableHasNumeration(String columnText) {
+        return countRowWithSymbol != 0 && isColumnHasNumeration(columnText);
     }
 
-    private boolean isRunHasNumeration(XWPFRun run) {
-        return run.getText(0).contains("1.");
+    private boolean isColumnHasNumeration(String columnText) {
+        return columnText.contains("1.");
     }
 
-    private void increaseNumeration(XWPFRun run, int countRowWithSymbol) {
-        run.setText(run.getText(0).replace("1.", countRowWithSymbol + 1 + "."), 0);
+    private void increaseNumeration(XWPFRun run, String columnText) {
+        run.setText(columnText.replace("1.", (countRowWithSymbol + 1) + "."), 0);
     }
 
     public int getCountRowWithSymbol() {

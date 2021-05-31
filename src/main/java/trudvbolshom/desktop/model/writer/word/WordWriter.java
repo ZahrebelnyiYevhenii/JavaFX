@@ -1,13 +1,13 @@
 package trudvbolshom.desktop.model.writer.word;
 
-import org.apache.poi.xwpf.usermodel.*;
+import org.apache.poi.xwpf.usermodel.Document;
+import org.apache.poi.xwpf.usermodel.IBodyElement;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import trudvbolshom.desktop.model.writer.FileWriter;
 import trudvbolshom.desktop.model.writer.word.factory.UpdateFactory;
 import trudvbolshom.desktop.model.writer.word.factory.UpdateFactoryImpl;
 import trudvbolshom.desktop.model.writer.word.factory.WordFactory;
 import trudvbolshom.desktop.model.writer.word.factory.WordFactoryImpl;
-import trudvbolshom.desktop.model.writer.word.updater.ParagraphUpdater;
-import trudvbolshom.desktop.model.writer.word.updater.TableUpdater;
 import trudvbolshom.desktop.model.writer.word.updater.Updater;
 import trudvbolshom.exception.InvalidWordTypeException;
 import trudvbolshom.exception.WordWorkerException;
@@ -21,15 +21,15 @@ public class WordWriter implements FileWriter {
     private Updater updater;
     private Document document;
 
-    public WordWriter(String templateFile) throws WordWorkerException {
+    public WordWriter(String templateFile) {
         try {
-            readWord(templateFile);
+            initDocument(templateFile);
         } catch (InvalidWordTypeException | IOException e) {
             throw new WordWorkerException("$$$$$ word file - " + templateFile + " is not found $$$$$");
         }
     }
 
-    private void readWord(String templateFile) throws IOException, InvalidWordTypeException {
+    private void initDocument(String templateFile) throws IOException, InvalidWordTypeException {
         WordFactory wordFactory = new WordFactoryImpl();
 
         document = wordFactory.makeDocument(templateFile);
@@ -44,12 +44,14 @@ public class WordWriter implements FileWriter {
 
     private void parseBodyElement(IBodyElement bodyElement, Map<Integer, List<String>> listOfRowData) {
         UpdateFactory updateFactory = new UpdateFactoryImpl();
+
         updater = updateFactory.makeUpdater(bodyElement, listOfRowData);
+
         updater.replace(bodyElement);
     }
 
     @Override
-    public void createNewWordDocument(String reportFile) throws WordWorkerException {
+    public void createNewWordDocument(String reportFile) {
         try {
             FileOutputStream outputStream = new FileOutputStream(reportFile);
 

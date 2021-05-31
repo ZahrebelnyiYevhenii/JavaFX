@@ -2,35 +2,15 @@ package trudvbolshom.desktop.model.list;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import trudvbolshom.desktop.model.reader.FileReader;
-import trudvbolshom.desktop.model.reader.excel.ExcelReader;
-
-import static trudvbolshom.constants.ConstantsClass.ROW_NUMBER_WITHOUT_TITLES;
 
 public class RowList {
-    private final ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
-    private final FileReader fileReader;
+    private ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
 
-    public RowList(FileReader fileReader) {
-        this.fileReader = fileReader;
+    public RowList() {
     }
 
-    public void fillRows() {
-        for (int rowNumber = ROW_NUMBER_WITHOUT_TITLES; rowNumber < getCountRows(); rowNumber++) {
-            rows.add(getExcelRowData(rowNumber));
-        }
-    }
-
-    private int getCountRows() {
-        return ((ExcelReader) fileReader).getDataByRows().size();
-    }
-
-    private ObservableList<String> getExcelRowData(int rowNumber) {
-        ObservableList<String> row = FXCollections.observableArrayList();
-
-        row.addAll(fileReader.getRowData(rowNumber));
-
-        return row;
+    public RowList(ObservableList<ObservableList<String>> rows) {
+        this.rows = rows;
     }
 
     public ObservableList<ObservableList<String>> getRows() {

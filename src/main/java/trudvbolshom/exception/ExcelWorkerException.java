@@ -1,6 +1,6 @@
 package trudvbolshom.exception;
 
-public class ExcelWorkerException extends Exception{
+public class ExcelWorkerException extends RuntimeException {
     public ExcelWorkerException() {
         super();
     }

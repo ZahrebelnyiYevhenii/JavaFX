@@ -6,6 +6,7 @@ import trudvbolshom.desktop.model.reader.FileReader;
 import trudvbolshom.desktop.model.reader.excel.factory.ExcelFactory;
 import trudvbolshom.desktop.model.reader.excel.factory.ExcelFactoryImpl;
 import trudvbolshom.exception.ExcelWorkerException;
+import trudvbolshom.exception.InvalidCellTypeException;
 import trudvbolshom.exception.InvalidExcelTypeException;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class ExcelReader implements FileReader {
     private final Map<Integer, List<Cell>> dataByRows = new HashMap<>();
     private Workbook excelBook;
 
-    public ExcelReader(String pathExcel) throws ExcelWorkerException {
+    public ExcelReader(String pathExcel) {
         try {
             readExcel(pathExcel);
         } catch (InvalidExcelTypeException | InvalidFormatException | IOException e) {
@@ -92,9 +93,7 @@ public class ExcelReader implements FileReader {
         } else if (cell.getCellType().equals(CellType.NUMERIC)) {
             return parseNumericType(cell);
         }
-        // TODO good catch exception
-        // throw new InvalidCellTypeException("$$$$ cell type is not supported ");
-        return null;
+        throw new InvalidCellTypeException("$$$$ cell type is not supported ");
     }
 
     private String parseNumericType(Cell cell) {

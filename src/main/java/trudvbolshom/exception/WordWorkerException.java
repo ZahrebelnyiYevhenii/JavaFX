@@ -1,6 +1,6 @@
 package trudvbolshom.exception;
 
-public class WordWorkerException extends Exception{
+public class WordWorkerException extends RuntimeException {
 
     public WordWorkerException() {
         super();

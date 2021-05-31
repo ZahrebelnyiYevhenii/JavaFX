@@ -1,11 +1,11 @@
 package trudvbolshom.exception;
 
-public class InvalidCellTypeException extends Exception{
+public class InvalidCellTypeException extends RuntimeException {
     public InvalidCellTypeException() {
         super();
     }
 
     public InvalidCellTypeException(String message) {
-        super(ExcelWorkerException.class.getName() + message);
+        super(InvalidCellTypeException.class.getName() + message);
     }
 }

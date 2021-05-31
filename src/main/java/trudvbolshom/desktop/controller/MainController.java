@@ -11,10 +11,10 @@ import javafx.stage.FileChooser;
 import trudvbolshom.desktop.model.list.RowList;
 import trudvbolshom.desktop.model.reader.FileReader;
 import trudvbolshom.desktop.model.reader.excel.ExcelReader;
+import trudvbolshom.desktop.model.reader.excel.list.ExcelRowList;
 import trudvbolshom.desktop.model.writer.word.WordWriter;
 import trudvbolshom.desktop.starter.AppFX;
-import trudvbolshom.exception.ExcelWorkerException;
-import trudvbolshom.exception.WordWorkerException;
+import trudvbolshom.exception.NotFoundTemplateFiles;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,14 +51,10 @@ public class MainController {
     }
 
     private void load() {
-        try {
-            loadExcelFile();
-        } catch (ExcelWorkerException e) {
-            showStatusLabel(e.getMessage());
-        }
+        loadExcelFile();
     }
 
-    private void loadExcelFile() throws ExcelWorkerException {
+    private void loadExcelFile() {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(appFX.getPrimaryStage());
 
@@ -87,86 +83,103 @@ public class MainController {
         int columnNumber = 0;
 
         for (String title : fileReader.getTitles()) {
-            TableColumn<ObservableList<String>, String> column = createColumn(columnNumber, title);
+            TableColumn<ObservableList<String>, String> columnTitle = createColumnTitle(columnNumber, title);
 
-            table.getColumns().add(column);
+            table.getColumns().add(columnTitle);
             columnNumber++;
         }
     }
 
-    private TableColumn<ObservableList<String>, String> createColumn(int columnNumber, String title) {
-        TableColumn<ObservableList<String>, String> column = new TableColumn<>(title);
+    private TableColumn<ObservableList<String>, String> createColumnTitle(int columnNumber, String title) {
+        TableColumn<ObservableList<String>, String> columnTitle = new TableColumn<>(title);
 
-        column.setEditable(true);
-        column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(columnNumber)));
-        column.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnTitle.setEditable(true);
+        columnTitle.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(columnNumber)));
+        columnTitle.setCellFactory(TextFieldTableCell.forTableColumn());
         // TODO changes cell text, in future
         //        column.setOnEditCommit(event -> System.out.println(event.getTablePosition().getTableColumn().getCellData(event.getTablePosition().getRow())));
 
-        return column;
+        return columnTitle;
     }
 
     private void fillCell() {
-        RowList rowList = new RowList(fileReader);
+        ExcelRowList excelRowList = new ExcelRowList(fileReader);
 
-        rowList.fillRows();
+        excelRowList.fillRows();
 
-        table.setItems(rowList.getRows());
-    }
-
-
-    @FXML
-    private void createWordTemplate() {
-        try {
-            String templateFilePath = RESOURCE_FOLDER + TEMPLATE_DIR + choiceTemplate.getValue() + WORD_DOCUMENT;
-            Map<Integer, List<String>> listOfRowData = getListOfRowData();
-            WordWriter wordWriter = new WordWriter(templateFilePath);
-
-            wordWriter.fillWordDocument(listOfRowData);
-
-            String reportFilePath = RESOURCE_FOLDER + REPORT_DIR + choiceTemplate.getValue() + "/" + listOfRowData.get(NUMBER_NAME_COLUMN).get(NUMBER_NAME_COLUMN) + WORD_DOCUMENT;
-            wordWriter.createNewWordDocument(reportFilePath);
-        } catch (WordWorkerException e) {
-            showStatusLabel(e.getMessage());
-        }
-    }
-
-    private Map<Integer, List<String>> getListOfRowData() {
-        ObservableList<ObservableList<String>> selectedRow = table.getSelectionModel().getSelectedItems();
-        Map<Integer, List<String>> listRowData = new HashMap<>();
-
-        for (ObservableList<String> listOfRowData : selectedRow) {
-            listRowData.put(selectedRow.indexOf(listOfRowData), listOfRowData);
-        }
-
-        return listRowData;
+        table.setItems(excelRowList.getRowList().getRows());
     }
 
     private void fillDisplayElement() {
         choiceTitle.setItems(FXCollections.observableArrayList(fileReader.getTitles()));
         choiceTitle.setValue(fileReader.getTitles().get(0));
-        choiceTemplate.setItems(FXCollections.observableArrayList(getAllTemplateName()));
-        choiceTemplate.setValue(getAllTemplateName().get(0));
+        choiceTemplate.setItems(FXCollections.observableArrayList(getAllTemplatesName()));
+        choiceTemplate.setValue(getAllTemplatesName().get(0));
     }
 
-    public List<String> getAllTemplateName() {
-        List<String> allTemplate = new ArrayList<>();
-
+    public List<String> getAllTemplatesName() {
         try {
-            File file = new File(RESOURCE_FOLDER + TEMPLATE_DIR);
-
-            for (File template : file.listFiles()) {
-                allTemplate.add(template.getName().replace(WORD_DOCUMENT, ""));
-            }
-
-            for (String fileName : allTemplate) {
-                Files.createDirectories(Paths.get(RESOURCE_FOLDER + REPORT_DIR + fileName));
-            }
+            return getTemplatesName();
         } catch (IOException e) {
-            showStatusLabel(ERROR);
+            showStatusLabel(ERROR_WITH_FOLDER);
+        }
+        throw new NotFoundTemplateFiles(ERROR_WITH_FOLDER);
+    }
+
+    private List<String> getTemplatesName() throws IOException {
+        List<String> allTemplates = new ArrayList<>();
+        File file = new File(TEMPLATE_DIR);
+
+        if (file.listFiles() != null) {
+            allTemplates.addAll(createTemplatesName(file));
+            createReportFolder(allTemplates);
         }
 
-        return allTemplate;
+        return allTemplates;
+    }
+
+    private List<String> createTemplatesName(File file) {
+        List<String> allTemplates = new ArrayList<>();
+
+        for (File template : file.listFiles()) {
+            allTemplates.add(template.getName().replace(WORD_DOCUMENT, ""));
+        }
+
+        return allTemplates;
+    }
+
+    private void createReportFolder(List<String> allTemplates) throws IOException {
+        for (String fileName : allTemplates) {
+            Files.createDirectories(Paths.get(REPORT_DIR + fileName));
+        }
+    }
+
+    @FXML
+    private void createWordTemplate() {
+        createWord();
+    }
+
+    private void createWord() {
+        String templateFilePath = TEMPLATE_DIR + choiceTemplate.getValue() + WORD_DOCUMENT;
+        WordWriter wordWriter = new WordWriter(templateFilePath);
+
+        Map<Integer, List<String>> listOfRowData = getListOfRowData();
+        wordWriter.fillWordDocument(listOfRowData);
+
+        String reportFilePath = REPORT_DIR + choiceTemplate.getValue() + "/" + listOfRowData.get(NUMBER_NAME_COLUMN).get(NUMBER_NAME_COLUMN) + WORD_DOCUMENT;
+        wordWriter.createNewWordDocument(reportFilePath);
+    }
+
+    private Map<Integer, List<String>> getListOfRowData() {
+        RowList selectedRow = new RowList(table.getSelectionModel().getSelectedItems());
+        Map<Integer, List<String>> rowIndexToRowCells = new HashMap<>();
+
+        int rowIndex = 0;
+        for (ObservableList<String> listOfRowData : selectedRow.getRows()) {
+            rowIndexToRowCells.put(rowIndex++, listOfRowData);
+        }
+
+        return rowIndexToRowCells;
     }
 
     @FXML
