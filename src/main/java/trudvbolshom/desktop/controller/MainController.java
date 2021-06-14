@@ -14,6 +14,7 @@ import trudvbolshom.desktop.model.reader.excel.ExcelReader;
 import trudvbolshom.desktop.model.reader.excel.list.ExcelRowList;
 import trudvbolshom.desktop.model.writer.word.WordWriter;
 import trudvbolshom.desktop.starter.AppFX;
+import trudvbolshom.desktop.starter.GitUpdater;
 import trudvbolshom.exception.NotFoundTemplateFiles;
 
 import java.io.File;
@@ -41,6 +42,15 @@ public class MainController {
 
     private AppFX appFX;
     private FileReader fileReader;
+
+    @FXML
+    private void updateProgram() throws IOException {
+        GitUpdater gitUpdater = new GitUpdater();
+
+        gitUpdater.updateNewVersion();
+
+        showStatusLabel(PROGRAM_UPDATED);
+    }
 
     @FXML
     private void uploadExcelFile() {

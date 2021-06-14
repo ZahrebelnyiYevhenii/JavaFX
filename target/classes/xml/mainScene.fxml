@@ -24,6 +24,7 @@
                         <items>
                           <MenuItem fx:id="uploadExcelFile" mnemonicParsing="false" onAction="#uploadExcelFile" text="Загрузить excel" />
                               <MenuItem mnemonicParsing="false" text="Сохранить" />
+                              <MenuItem fx:id="updateProgram" mnemonicParsing="false" onAction="#updateProgram" text="Обновить программу" />
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="Опис" />
