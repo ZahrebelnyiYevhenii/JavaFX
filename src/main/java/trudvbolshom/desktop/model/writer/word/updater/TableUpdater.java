@@ -149,7 +149,8 @@ public class TableUpdater extends Updater<XWPFTable> {
         for (XWPFTableRow rowWithSymbol : table.getRows()) {
             if (isRowWithSpecialSymbol(rowWithSymbol)) {
                 replaceRow(rowWithSymbol, countRowWithSymbol);
-                countRowWithSymbol++;
+                if (listOfRowData.size() > 1)
+                    countRowWithSymbol++;
             }
         }
     }

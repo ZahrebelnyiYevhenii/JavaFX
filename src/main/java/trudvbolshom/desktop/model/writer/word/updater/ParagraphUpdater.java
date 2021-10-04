@@ -4,11 +4,16 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import trudvbolshom.desktop.model.writer.word.validator.PatternValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 
 import static trudvbolshom.constants.ConstantsClass.SPECIAL_SYMBOL;
+import static trudvbolshom.constants.DateFormat.MEDIUM;
+import static trudvbolshom.constants.SpecialData.DATE;
+import static trudvbolshom.constants.SpecialData.PROTOCOL_NUMBER;
 
 public class ParagraphUpdater extends Updater<XWPFParagraph> {
     public int countRowWithSymbol = 0;
@@ -30,9 +35,36 @@ public class ParagraphUpdater extends Updater<XWPFParagraph> {
         String columnText = run.getText(0);
 
         if (PatternValidator.isTextHasSpecialSymbol(columnText)) {
-            replaceSymbolToData(run, columnText);
+            replaceSymbol(run, columnText);
         } else if (isTableHasNumeration(columnText)) {
             increaseNumeration(run, columnText);
+        }
+    }
+
+    private void replaceSymbol(XWPFRun run, String columnText) {
+        replaceDate(run, columnText);
+        replaceNumber(run, columnText);
+
+        replaceSymbolToData(run, columnText);
+    }
+
+    private void replaceDate(XWPFRun run, String columnText) {
+        int columnNumber = getColumnNumber(columnText);
+
+        if (columnNumber == DATE.getSpecialNumber()) {
+            String today = MEDIUM.format(LocalDateTime.now());
+
+            run.setText(columnText.replace(SPECIAL_SYMBOL + columnNumber, today), 0);
+        }
+    }
+
+    private void replaceNumber(XWPFRun run, String columnText) {
+        int columnNumber = getColumnNumber(columnText);
+
+        if (columnNumber == PROTOCOL_NUMBER.getSpecialNumber()) {
+            LocalDateTime today = LocalDateTime.now();
+
+            run.setText(columnText.replace(SPECIAL_SYMBOL + columnNumber, today.getYear() - 2000 + "" + today.getMonthValue() + " - " + new Random().nextInt(100000)), 0);
         }
     }
 

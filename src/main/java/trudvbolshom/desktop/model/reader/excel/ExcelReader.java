@@ -10,12 +10,11 @@ import trudvbolshom.exception.InvalidCellTypeException;
 import trudvbolshom.exception.InvalidExcelTypeException;
 
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static trudvbolshom.constants.ConstantsClass.NUMBER_FIRST_SHEET;
+import static trudvbolshom.constants.DateFormat.MEDIUM;
 
 public class ExcelReader implements FileReader {
     private final Map<Integer, List<Cell>> dataByRows = new HashMap<>();
@@ -105,10 +104,7 @@ public class ExcelReader implements FileReader {
     }
 
     private String getFormatDate(Cell cell) {
-        return DateTimeFormatter
-                .ofLocalizedDate(FormatStyle.MEDIUM)
-                .withLocale(new Locale("ru"))
-                .format(cell.getLocalDateTimeCellValue().toLocalDate());
+        return MEDIUM.format(cell.getLocalDateTimeCellValue().toLocalDate());
     }
 
     public Map<Integer, List<Cell>> getDataByRows() {
