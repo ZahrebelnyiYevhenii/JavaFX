@@ -68,7 +68,8 @@ public class TableUpdater extends Updater<XWPFTable> {
 
     private boolean isParagraphHasSpecialSymbol(XWPFParagraph paragraph) {
         return paragraph.getRuns().size() != 0 &&
-                PatternValidator.isTextHasSpecialSymbol(paragraph.getRuns().get(0).getText(0));
+                (PatternValidator.isTextHasSpecialSymbol(paragraph.getRuns().get(0).getText(0)) ||
+                        PatternValidator.isTextHasNumerationSymbol(paragraph.getRuns().get(0).getText(0)));
     }
 
     private void createNewRowForPerson(XWPFTable table, XWPFTableRow rootTableRow) {

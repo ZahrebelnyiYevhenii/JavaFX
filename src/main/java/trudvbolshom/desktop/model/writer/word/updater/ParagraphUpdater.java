@@ -42,38 +42,23 @@ public class ParagraphUpdater extends Updater<XWPFParagraph> {
     }
 
     private void replaceSymbol(XWPFRun run, String columnText) {
-        replaceDate(run, columnText);
-        replaceNumber(run, columnText);
+        int columnNumber = getColumnNumber(columnText);
+        String textForReplace = chooseTextForReplace(columnNumber);
 
-        replaceSymbolToData(run, columnText);
+        run.setText(columnText.replace(SPECIAL_SYMBOL + columnNumber, textForReplace), 0);
     }
 
-    private void replaceDate(XWPFRun run, String columnText) {
-        int columnNumber = getColumnNumber(columnText);
-
+    private String chooseTextForReplace(int columnNumber) {
         if (columnNumber == DATE.getSpecialNumber()) {
-            String today = MEDIUM.format(LocalDateTime.now());
-
-            run.setText(columnText.replace(SPECIAL_SYMBOL + columnNumber, today), 0);
-        }
-    }
-
-    private void replaceNumber(XWPFRun run, String columnText) {
-        int columnNumber = getColumnNumber(columnText);
-
-        if (columnNumber == PROTOCOL_NUMBER.getSpecialNumber()) {
+            return MEDIUM.format(LocalDateTime.now());
+        } else if (columnNumber == PROTOCOL_NUMBER.getSpecialNumber()) {
             LocalDateTime today = LocalDateTime.now();
-
-            run.setText(columnText.replace(SPECIAL_SYMBOL + columnNumber, today.getYear() - 2000 + "" + today.getMonthValue() + " - " + new Random().nextInt(100000)), 0);
+            return today.getYear() - 2000 + "" + today.getMonthValue() + " - " + new Random().nextInt(100000);
+        } else if (listOfRowData.get(countRowWithSymbol).size() > columnNumber) {
+            return listOfRowData.get(countRowWithSymbol).get(columnNumber);
         }
-    }
 
-    private void replaceSymbolToData(XWPFRun run, String columnText) {
-        int columnNumber = getColumnNumber(columnText);
-
-        if (listOfRowData.get(countRowWithSymbol).size() > columnNumber) {
-            run.setText(columnText.replace(SPECIAL_SYMBOL + columnNumber, listOfRowData.get(countRowWithSymbol).get(columnNumber)), 0);
-        }
+        return "";
     }
 
     private int getColumnNumber(String columnText) {
