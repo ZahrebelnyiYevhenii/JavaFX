@@ -18,9 +18,10 @@ public class ConstantsClass {
     public static final String XLS = ".xls";
     public static final String ERROR_WITH_FOLDER = "Проблема з створенням папки";
     public static final String DOCUMENT_HAS_NOT_SUPPORTED_TYPE = "В шаблонному файле, есть тип даных, который не поддерживаеться";
-    public static final String VERSION_FILE = "README.md";
+    public static final String VERSION_FILE = "VERSION.md";
     public static final String EXE_FILE = "TVBG.exe";
-    public static final String TEMP_FOLDER = "../resources";
+    public static final String TEMP_FOLDER = "../resource";
     public static final String GIT_REPOSITORY = "https://github.com/ZahrebelnyiYevhenii/JavaFX.git";
-    public static final String PROGRAM_UPDATED = "програма обновленна";
+    public static final String PROGRAM_NOT_HAVE_UPDATE = "программа не имеет обновления";
+    public static final String PROGRAM_UPDATED = "программа обновленна";
 }

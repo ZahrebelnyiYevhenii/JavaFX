@@ -1,5 +1,7 @@
 package trudvbolshom.desktop.starter;
 
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -11,45 +13,52 @@ import java.util.Locale;
 import static trudvbolshom.constants.ConstantsClass.*;
 
 public class GitUpdater {
+    private Git git;
 
     public GitUpdater() {
         try {
             FileUtils.deleteDirectory(Paths.get(TEMP_FOLDER).toFile());
-
-            Git.cloneRepository()
+            git = Git.cloneRepository()
                     .setURI(GIT_REPOSITORY)
                     .setDirectory(new File(TEMP_FOLDER))
                     .call();
         } catch (GitAPIException | IOException e) {
-            e.printStackTrace();
+            e.getStackTrace();
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        GitUpdater gitUpdater = new GitUpdater();
-
-        gitUpdater.updateNewVersion();
-    }
-
-
-    public void updateNewVersion() throws IOException {
+    public void updater(Stage primaryStage) {
         boolean hasUpdate = hasNewVersion();
 
         if (hasUpdate) {
             updateFile();
+
+            primaryStage.close();
+            Platform.runLater(() -> new AppFX().start(new Stage()));
+        }
+
+        git.getRepository().close();
+        git.close();
+    }
+
+    private void updateFile() {
+        try {
+            writeFile(EXE_FILE);
+            writeFile(VERSION_FILE);
+        } catch (IOException e) {
+            throw new RuntimeException(e + " version file or exe file has problem");
         }
     }
 
-    private void updateFile() throws IOException {
-        writeFile(EXE_FILE);
-        writeFile(VERSION_FILE);
-    }
+    public boolean hasNewVersion() {
+        try (
+                ByteArrayOutputStream repoOutputStream = readFile(TEMP_FOLDER + "/" + VERSION_FILE);
+                ByteArrayOutputStream localOutputStream = readFile(VERSION_FILE);) {
 
-    private boolean hasNewVersion() throws IOException {
-        ByteArrayOutputStream repoOutputStream = readFile(TEMP_FOLDER + "/" + VERSION_FILE);
-        ByteArrayOutputStream localOutputStream = readFile(VERSION_FILE);
-
-        return !repoOutputStream.toString().toLowerCase(Locale.ROOT).equals(localOutputStream.toString().toLowerCase(Locale.ROOT));
+            return !repoOutputStream.toString().toLowerCase(Locale.ROOT).equals(localOutputStream.toString().toLowerCase(Locale.ROOT));
+        } catch (IOException e) {
+            throw new RuntimeException(e + " version file has problem");
+        }
     }
 
     private void writeFile(String nameFile) throws IOException {
@@ -63,7 +72,6 @@ public class GitUpdater {
         while (repoInputStream.read(allFile) != -1) {
             localOutputStream.write(allFile);
         }
-
         localOutputStream.close();
         repoInputStream.close();
     }
@@ -77,7 +85,7 @@ public class GitUpdater {
         while (repoInputStream.read(allFile) != -1) {
             repoOutputStream.write(allFile);
         }
+        repoInputStream.close();
         return repoOutputStream;
     }
-
 }

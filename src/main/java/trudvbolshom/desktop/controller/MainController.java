@@ -44,36 +44,35 @@ public class MainController {
     private FileReader fileReader;
 
     @FXML
-    private void updateProgram() throws IOException {
+    private void updateProgram() {
         GitUpdater gitUpdater = new GitUpdater();
 
-        gitUpdater.updateNewVersion();
-
-        showStatusLabel(PROGRAM_UPDATED);
+        gitUpdater.updater(appFX.getPrimaryStage());
+        showStatusLabel(PROGRAM_NOT_HAVE_UPDATE);
     }
 
     @FXML
     private void uploadExcelFile() {
-        load();
-        initTable();
-        fillTable();
-        fillDisplayElement();
-    }
-
-    private void load() {
         loadExcelFile();
+
+        if (fileReader != null) {
+            initTable();
+            fillTable();
+            fillDisplayElement();
+        }
     }
 
     private void loadExcelFile() {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(appFX.getPrimaryStage());
+        if (file != null) {
+            fileReader = new ExcelReader(file.getPath());
 
-        fileReader = new ExcelReader(file.getPath());
-
-        showStatusLabel(SUCCESS);
+            showStatusLabel(SUCCESS);
+        }
     }
 
-    private void showStatusLabel(String text) {
+    public void showStatusLabel(String text) {
         smallPanel.setVisible(true);
         loadLabel.setText(text);
     }

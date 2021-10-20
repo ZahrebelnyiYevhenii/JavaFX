@@ -91,8 +91,10 @@ public class ExcelReader implements FileReader {
             return cell.getStringCellValue();
         } else if (cell.getCellType().equals(CellType.NUMERIC)) {
             return parseNumericType(cell);
+        } else if (cell.getCellType().equals(CellType.BLANK)){
+            return "";
         }
-        throw new InvalidCellTypeException("$$$$ cell type is not supported ");
+        throw new InvalidCellTypeException("$$$$ cell type is not supported " + cell.getCellType());
     }
 
     private String parseNumericType(Cell cell) {
