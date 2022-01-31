@@ -12,11 +12,11 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="trudvbolshom.desktop.controller.MainController">
+<AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="trudvbolshom.desktop.controller.MainController">
    <children>
       <SplitPane dividerPositions="0.2979942693409742" layoutX="426.0" layoutY="220.0" prefHeight="600.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #89A6A6;">
                <children>
                   <MenuBar layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <menus>
@@ -40,7 +40,7 @@
                <children>
                   <SplitPane dividerPositions="0.49161073825503354" orientation="VERTICAL" prefHeight="598.0" prefWidth="487.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
-                      <AnchorPane fx:id="createReport" prefHeight="280.0" prefWidth="485.0">
+                      <AnchorPane fx:id="createReport" prefHeight="280.0" prefWidth="485.0" style="-fx-background-color: #379090;">
                            <children>
                               <ChoiceBox fx:id="choiceTitle" layoutX="321.0" layoutY="38.0" prefWidth="150.0" />
                               <ChoiceBox fx:id="choiceTemplate" layoutX="9.0" layoutY="89.0" prefHeight="25.0" prefWidth="150.0" />
@@ -54,7 +54,7 @@
                         </AnchorPane>
                       <AnchorPane>
                            <children>
-                              <TableView fx:id="table" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <TableView fx:id="table" style="-fx-background-color: #AADDDD;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                     </items>

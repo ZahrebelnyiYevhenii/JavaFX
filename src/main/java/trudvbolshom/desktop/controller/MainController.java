@@ -14,7 +14,7 @@ import trudvbolshom.desktop.model.reader.excel.ExcelReader;
 import trudvbolshom.desktop.model.reader.excel.list.ExcelRowList;
 import trudvbolshom.desktop.model.writer.word.WordWriter;
 import trudvbolshom.desktop.starter.AppFX;
-import trudvbolshom.desktop.starter.GitUpdater;
+import trudvbolshom.desktop.utils.GitUpdater;
 import trudvbolshom.exception.NotFoundTemplateFiles;
 
 import java.io.File;
@@ -44,10 +44,10 @@ public class MainController {
     private FileReader fileReader;
 
     @FXML
-    private void updateProgram() {
+    private void updateProgram() throws IOException {
         GitUpdater gitUpdater = new GitUpdater();
 
-        gitUpdater.updater(appFX.getPrimaryStage());
+        gitUpdater.updater();
         showStatusLabel(PROGRAM_NOT_HAVE_UPDATE);
     }
 
@@ -72,7 +72,7 @@ public class MainController {
         }
     }
 
-    public void showStatusLabel(String text) {
+    private void showStatusLabel(String text) {
         smallPanel.setVisible(true);
         loadLabel.setText(text);
     }
