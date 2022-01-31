@@ -1,1 +1,1 @@
-# JavaFX 0.2
+# JavaFX 1.0
