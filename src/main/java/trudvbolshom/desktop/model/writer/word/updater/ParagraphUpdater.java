@@ -10,13 +10,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 
-import static trudvbolshom.constants.ConstantsClass.SPECIAL_SYMBOL;
+import static trudvbolshom.constants.ConstantsClass.*;
 import static trudvbolshom.constants.DateFormat.MEDIUM;
-import static trudvbolshom.constants.SpecialData.DATE;
-import static trudvbolshom.constants.SpecialData.PROTOCOL_NUMBER;
+import static trudvbolshom.constants.SpecialData.*;
 
 public class ParagraphUpdater extends Updater<XWPFParagraph> {
-    public int countRowWithSymbol = 0;
+    private int countRowWithSymbol = 0;
 
     public ParagraphUpdater(Map<Integer, List<String>> listOfRowData) {
         super(listOfRowData);
@@ -52,13 +51,54 @@ public class ParagraphUpdater extends Updater<XWPFParagraph> {
         if (columnNumber == DATE.getSpecialNumber()) {
             return MEDIUM.format(LocalDateTime.now());
         } else if (columnNumber == PROTOCOL_NUMBER.getSpecialNumber()) {
-            LocalDateTime today = LocalDateTime.now();
-            return today.getYear() - 2000 + "" + today.getMonthValue() + " - " + new Random().nextInt(100000);
+            return prepareProtocolNumber();
+        } else if (columnNumber == CERTIFICATE_NUMBER.getSpecialNumber()) {
+            return prepareCertificateNumber();
         } else if (listOfRowData.get(countRowWithSymbol).size() > columnNumber) {
             return listOfRowData.get(countRowWithSymbol).get(columnNumber);
         }
 
         return "";
+    }
+
+
+    private String prepareCertificateNumber() {
+        LocalDateTime today = LocalDateTime.now();
+        StringBuilder protocolNumber = new StringBuilder();
+        int ordinalNumber = countRowWithSymbol + 1;
+
+        protocolNumber.append(addZeroToNumber(today.getMonthValue(), false));
+        protocolNumber.append(" - ");
+        protocolNumber.append(addZeroToNumber(ordinalNumber, true));
+
+        return protocolNumber.toString();
+    }
+
+    private String prepareProtocolNumber() {
+        LocalDateTime today = LocalDateTime.now();
+        StringBuilder protocolNumber = new StringBuilder();
+
+        protocolNumber.append(today.getYear() - CENTURY);
+        protocolNumber.append(addZeroToNumber(today.getMonthValue(), false));
+        protocolNumber.append(" - ").append(new Random().nextInt(RANDOM_BOUND));
+
+        return protocolNumber.toString();
+    }
+
+    private String addZeroToNumber(int number, boolean twoZero) {
+        StringBuilder numberWithZero = new StringBuilder();
+
+        if (number < 100 && twoZero) {
+            numberWithZero.append("0");
+        }
+
+        if (number < 10) {
+            numberWithZero.append("0").append(number);
+        } else {
+            numberWithZero.append(number);
+        }
+
+        return numberWithZero.toString();
     }
 
     private int getColumnNumber(String columnText) {

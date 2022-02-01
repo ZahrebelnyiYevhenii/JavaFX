@@ -2,7 +2,8 @@ package trudvbolshom.constants;
 
 public enum SpecialData {
     DATE(66),
-    PROTOCOL_NUMBER(99);
+    PROTOCOL_NUMBER(99),
+    CERTIFICATE_NUMBER(98);
 
 
     private int specialNumber;

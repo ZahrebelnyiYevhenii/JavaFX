@@ -2,6 +2,8 @@ package trudvbolshom.constants;
 
 public class ConstantsClass {
     public static final int BUFFERED_SIZE = 64000;
+    public static final int CENTURY = 2000;
+    public static final int RANDOM_BOUND = 100000;
     public static final int NUMBER_NAME_COLUMN = 0;
     public static final int NUMBER_FIRST_SHEET = 0;
     public static final int ROW_NUMBER_WITHOUT_TITLES = 1;

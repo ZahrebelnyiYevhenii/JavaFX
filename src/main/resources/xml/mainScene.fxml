@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -16,9 +17,9 @@
    <children>
       <SplitPane dividerPositions="0.2979942693409742" layoutX="426.0" layoutY="220.0" prefHeight="600.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #89A6A6;">
+          <AnchorPane maxWidth="300.0" minWidth="100.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #D0EEEE; -fx-border-color: #D0EEEE;">
                <children>
-                  <MenuBar layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <MenuBar layoutY="2.0" style="-fx-background-color: #D0EEEE; -fx-border-color: #AADDDD;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <menus>
                       <Menu mnemonicParsing="false" text="Файл">
                         <items>
@@ -27,34 +28,58 @@
                               <MenuItem fx:id="updateProgram" mnemonicParsing="false" onAction="#updateProgram" text="Обновить программу" />
                         </items>
                       </Menu>
-                      <Menu mnemonicParsing="false" text="Опис" />
+                      <Menu mnemonicParsing="false" text="О программе" />
                     </menus>
                   </MenuBar>
-                  <Button layoutY="34.0" mnemonicParsing="false" text="Посмотреть всю информацию" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button layoutY="65.0" mnemonicParsing="false" text="Изменить" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button layoutX="77.0" layoutY="96.0" mnemonicParsing="false" text="Поиск" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button layoutX="77.0" layoutY="127.0" mnemonicParsing="false" text="Сортировать" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button layoutY="34.0" mnemonicParsing="false" style="-fx-background-color: #9098AA;" text="Посмотреть всю информацию" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button layoutY="65.0" mnemonicParsing="false" style="-fx-background-color: #9098AA;" text="Изменить" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button layoutX="77.0" layoutY="96.0" mnemonicParsing="false" style="-fx-background-color: #9098AA;" text="Поиск" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button layoutX="77.0" layoutY="127.0" mnemonicParsing="false" style="-fx-background-color: #9098AA;" text="Сортировать" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane minWidth="150.0" prefHeight="160.0" prefWidth="100.0">
                <children>
                   <SplitPane dividerPositions="0.49161073825503354" orientation="VERTICAL" prefHeight="598.0" prefWidth="487.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
-                      <AnchorPane fx:id="createReport" prefHeight="280.0" prefWidth="485.0" style="-fx-background-color: #379090;">
+                      <AnchorPane fx:id="createReport" minHeight="100.0" minWidth="100.0" prefHeight="280.0" prefWidth="485.0" style="-fx-background-color: #C5EEEE; -fx-border-color: #C5EEEE;">
                            <children>
-                              <ChoiceBox fx:id="choiceTitle" layoutX="321.0" layoutY="38.0" prefWidth="150.0" />
-                              <ChoiceBox fx:id="choiceTemplate" layoutX="9.0" layoutY="89.0" prefHeight="25.0" prefWidth="150.0" />
+                              <ChoiceBox fx:id="choiceTitle" layoutX="321.0" layoutY="38.0" maxWidth="700.0" minWidth="100.0" prefWidth="150.0" style="-fx-background-color: #94B394;">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ChoiceBox>
+                              <ChoiceBox fx:id="choiceTemplate" layoutX="9.0" layoutY="89.0" prefHeight="25.0" prefWidth="150.0" style="-fx-background-color: #94B394; -fx-border-color: #94B394;">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ChoiceBox>
                               <Label layoutX="62.0" layoutY="70.0" text="Шаблон" />
-                              <Button fx:id="template" layoutX="185.0" layoutY="89.0" mnemonicParsing="false" onAction="#createWordTemplate" text="Получить шаблон" />
+                              <Button fx:id="template" layoutX="185.0" layoutY="89.0" mnemonicParsing="false" onAction="#createWordTemplate" style="-fx-background-color: #9098AA;" text="Получить шаблон">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
                               <Label alignment="CENTER" layoutX="19.0" layoutY="14.0" prefHeight="17.0" prefWidth="175.0" text="Поиск по столбцу" />
-                              <TextField layoutX="19.0" layoutY="38.0" prefHeight="25.0" prefWidth="175.0" />
+                              <TextField layoutX="19.0" layoutY="38.0" prefHeight="25.0" prefWidth="175.0" style="-fx-background-color: #3B5594;">
+                                 <cursor>
+                                    <Cursor fx:constant="TEXT" />
+                                 </cursor></TextField>
                               <Label alignment="CENTER" layoutX="321.0" layoutY="14.0" prefHeight="17.0" prefWidth="150.0" text="Название столбца" textAlignment="CENTER" />
                               <CheckBox fx:id="chooseOneFile" layoutX="363.0" layoutY="93.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="92.0" text="один файл" />
                            </children>
                         </AnchorPane>
-                      <AnchorPane>
+                      <AnchorPane style="-fx-background-color: #AADDDD;">
                            <children>
-                              <TableView fx:id="table" style="-fx-background-color: #AADDDD;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <TableView fx:id="table" style="-fx-background-color: #AADDDD; -fx-border-color: #AADDDD;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                     </items>
